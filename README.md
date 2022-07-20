@@ -1,10 +1,10 @@
-█ █ █ █ █ █ █ █ █ █
-█ . . . . . . . . █
-█ . . . . . . . . █
-█ . . . . . . . . █
-█ . . . . . . . @ █
-█ . . . . . . . . █
-█ █ █ █ █ █ █ █ █ █
+█ █ █ █ █ █ █ █ █ █ 
+█ . . . . . . . . █ 
+█ . . . . . . . . █ 
+█ . . . . . . . . █ 
+█ . . . . . . . @ █ 
+█ . . . . . . . . █ 
+█ █ █ █ █ █ █ █ █ █ 
 Examble of a valid level with the exception of octothorpes being replaced with full blocks.
 
 The game runs on the terminal with the following command:

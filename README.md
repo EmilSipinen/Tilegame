@@ -1,11 +1,11 @@
-# # # # # # # # # #
-# . . . . . . . . #
-# . . . . . . . . #
-# . . . . . . . . #
-# . . . . . . . @ #
-# . . . . . . . . #
-# # # # # # # # # #
-example of a valid level
+█ █ █ █ █ █ █ █ █ █
+█ . . . . . . . . █
+█ . . . . . . . . █
+█ . . . . . . . . █
+█ . . . . . . . @ █
+█ . . . . . . . . █
+█ █ █ █ █ █ █ █ █ █
+Examble of a valid level with the exception of octothorpes being replaced with full blocks.
 
 The game runs on the terminal with the following command:
 
@@ -17,4 +17,3 @@ Rules to making functioning level files.
 -Each line on the level must be of equal lenght.
 -A character other than whitespace should be the first and last character on a line.
 -The borders of the level should be octothorpes to keep the player on the board.
-

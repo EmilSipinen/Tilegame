@@ -1,417 +1,335 @@
-# python2 -u Tilegame_prototype2.py Subjectfile.txt
+# python2 -u Tilegame_prototype2.py Level.txt
 
-from sys import argv
-script, file = argv
-fileData = open(file)
-content = str(fileData.read())
+#----
+def convertFileToList(): 
+    # Converts file to list
 
-print "\n"
-print content
-
-gameOver = False
-
-fileData.close()
-
-#---
-"""
-def reloadFile():
-# convert map file into usable form
-    from sys import argv
-    script, file = argv
-
-    fileData = open(file)
-    global content
-    content = fileData.read()
-    
-    fileData.close()
-
-    global lines
-    lines = content.splitlines()
-
-    global x_len
-    x_len = len(lines)
-    #print x_len # how long vertically the map is
-    
-    #print lines
-    
-    global y_len
-    lenY = lines[0].split()
-    y_len = len(lenY)
-    #print y_len # how long the map horisontaly is
-
-    global playerIndexPosition
-    playerIndexPosition = content.find("@")
-    # find index number of player
-       
-    # f check player surroundings and return what is there
-    global wIndex
-    wIndex = playerIndexPosition - (y_len * 2 - 1)
-    #print wIndex
-    global wContent
-    wContent = content[wIndex - 1]
-    #print wContent
-
-    global aIndex
-    aIndex = playerIndexPosition - 1
-    #print aIndex
-    global aContent
-    aContent = content[aIndex - 1]
-    #print aContent
-
-    global sIndex
-    sIndex = playerIndexPosition + (y_len * 2 + 1)
-    #print sIndex
-    global sContent
-    sContent = content[sIndex - 1]
-    #print sContent
-
-    global dIndex
-    dIndex = playerIndexPosition + 3
-    #print dIndex
-    global dContent
-    dContent = content[dIndex - 1]
-    
-"""
-    
-def indexList():
-    # convert map file into usable form
     from sys import argv
     script, file = argv
     fileData = open(file)
     content = fileData.read() 
     fileData.close()
+    
+    lines = content.splitlines() # Divide string into list of lines
+    yLen = len(lines) # How long vertically the map is
+    len_x = lines[0].split() # Divide first line into a list of characters in it.
+    xLen = len(len_x) # How long the map horisontaly is
+    
+    contentList = [[0 for i in range(xLen)] for j in range(yLen)]
+    # This line generates the map with each tile having the value 0.
+    # All changes to tiles are going to be made with the setCoordinate() function.
 
-    lines = content.splitlines()
-    x_len = len(lines) # how long vertically the map is
-    lenY = lines[0].split()
-    y_len = len(lenY) # how long the map horisontaly is
+    for i in range(yLen):
+        for j in range(xLen):
+            fill = lines[i][j * 2] # *2 multiplier comes from having to skip whitespaces.
+            setCoordinate(contentList, j, i, fill)
+    # This for loop replaces each tile with corresponding value from the txt file.    
+    
+    #print yLen
+    #print xLen
+    
+    return contentList
 
+#----
+def convertListToString(contentList):
+    #Take the game board and turn it into a string for printing.
     
-    playerIndexPosition = content.find("@")
-    # find index number of player
-       
-    # f check player surroundings and return what is there
-    wIndex = playerIndexPosition - (y_len * 2 - 1)
-    aIndex = playerIndexPosition - 1
-    sIndex = playerIndexPosition + (y_len * 2 + 1)
-    dIndex = playerIndexPosition + 3
+    yLen = len(contentList)
+    xLen = len(contentList[0])
+    # Width and lenght of board.
     
-    return [playerIndexPosition, wIndex, aIndex, sIndex, dIndex]
+    string = "" 
+    row = ""
     
-def contentList(indexList):
-    # convert map file into usable form
-    from sys import argv
-    script, file = argv
+    for i in range(yLen):
+        for j in range(xLen):
+            row = row + str(contentList[i][j]) + " "
+        string = string + row + "\n"
+        row = ""
+    # This loop constructs a string using the list.
+    # The inner loop creates a string containing one line of the contentList.
+    # The outer loop takes the line-strings and combines them to one.
+    
+    
+    return string
 
-    fileData = open(file)
-    content = fileData.read()
-    fileData.close()
-
-    lines = content.splitlines()
-    x_len = len(lines)# how long vertically the map is
-    lenY = lines[0].split()
-    y_len = len(lenY)# how long the map horisontaly is
-    
-    wIndex = indexList[1]
-    aIndex = indexList[2]
-    sIndex = indexList[3]
-    dIndex = indexList[4]
-       
-    # f check player surroundings and return what is there
-    wContent = content[wIndex - 1]
-    aContent = content[aIndex - 1]
-    sContent = content[sIndex - 1]
-    dContent = content[dIndex - 1]
-    
-    return[content, wContent, aContent, sContent, dContent]
-
-def newContent(content):
-    print content
-       
-# f check validity of input   
-def wAction():
-    content = contentList(indexList())
-    
-    wContent = content[1]
-    
-    if wContent == ".":
-        canMove = True
-    elif wContent == "#":
-        canMove = False
+#----
+def setCoordinate(contentList, x, y, change): 
+    # takes one square on the board and changes the character in it to another.
+    if change == " ":
+        pass  # In case the level is typed wrong 0 will be typed on effected tiles.
     else:
-        pass
-    return [canMove]
+        targetRow = contentList[y]
+        targetCharacter = targetRow[x]
+        targetRow[x] = change
+        contentList[y] = targetRow
     
-def aAction():
-    content = contentList(indexList())
+    return contentList  
+
+#----
+def findCoordinates(contentList, target):
+    #Returns a list in which each element is the coordinate for one of the targets.
+    #example coordinateList = [[1, 3] [2, 4]]
     
-    aContent = content[2]
+    coordinateList = []
     
-    if aContent == ".":
-        canMove = True
-    elif aContent == "#":
-        canMove = False
-    else:
-        pass
+    yLen = len(contentList)
+    xLen = len(contentList[0])
+    
+    for i in range(yLen):
+        for j in range(xLen):
+            tile = contentList[i][j]
+            if str(tile) == str(target):
+                newCoordinate = [j, i]
+                coordinateList.append(newCoordinate)
+            else:
+                pass
+    # The double loop goes trough every value in the contentList. 
+    # On each tile the if statement checks if the the tile contains a wanted value.
+    # If it does, then the values [j, i] are appended to the coordinateList.
+    # If it doesnt, then nothing is done.
+    
+    return coordinateList
+
+#----
+def lookUpCoordinates(contentList, targetCoordinates):
+    # Returns list with the contents of coordinates in the given order.
+    # Takes: (contentList, [[x, y], [x, y], [x, y]])
+    # Returns: ['?', '?', '?']
+    
+    coordinateContentList = []
+    
+    listLenght = len(targetCoordinates)
+    
+    for i in range(listLenght):
+        targetX = targetCoordinates[i][0]
+        targetY = targetCoordinates[i][1]
         
-    return [canMove]
-    
-def sAction():
-    content = contentList(indexList())
-    
-    sContent = content[3]
-    
-    if sContent == ".":
-        canMove = True
-    elif sContent == "#":
-        canMove = False
-    else:
-        pass
+        targetContent = contentList[targetY][targetX]
         
-    return [canMove]
-    
-def dAction():
-    content = contentList(indexList())
-
-    dContent = content[4]
-    
-    if dContent == ".":
-        canMove = True
-    elif dContent == "#":
-        canMove = False
-    else:
-        pass
+        coordinateContentList.append(targetContent)
         
-    return [canMove]
-
-# f take player input
-def inputW(contentList, indexList, action):
-
-    content = contentList[0]
-    wIndex = indexList[1]
-    playerIndexPosition = indexList[0]
-
-    # f update player w position
-    if action[0] == True:
-        global newContent
-        newContent_ = content[:wIndex-1] + "@" + content[wIndex:]
-        newContent = newContent_[:playerIndexPosition] + "." + newContent_[playerIndexPosition+1:]
-        print ""
-        print newContent
-    else:
-        print "You can't walk trough walls.\n"
-        print content
+    return coordinateContentList
     
-    from sys import argv
-    script, file = argv
+#---- 
+def playerTurn(contentList):
+    #The playerTurn function takes input from player and updates the contentList accordingly.
+    playerInput = raw_input("> ")    
     
-    fileData = open(file, 'w')
-    fileData.truncate()
-    fileData.write(newContent)
-    fileData.close()
-    
-def inputA(contentList, indexList, action):
-
-    content = contentList[0]
-    aIndex = indexList[2]
-    playerIndexPosition = indexList[0]
-
-    # f update player a position
-    if action[0] == True:
-        global newContent
-        newContent_ = content[:aIndex-1] + "@" + content[aIndex:]
-        newContent = newContent_[:playerIndexPosition] + "." + newContent_[playerIndexPosition+1:]
-        print ""
-        print newContent
-    else:
-        print "You can't walk trough walls.\n"
-        print content
-    
-    from sys import argv
-    script, file = argv
-    
-    fileData = open(file, 'w')
-    fileData.truncate()
-    fileData.write(newContent)
-    fileData.close()
-    
-def inputS(contentList, indexList, action):
-    #tileAction(sContent)
-
-    # f update player s position
-
-    content = contentList[0]
-    sIndex = indexList[3]
-    playerIndexPosition = indexList[0]
-
-    # f update player s position
-    if action[0] == True:
-        global newContent
-        newContent_ = content[:sIndex-1] + "@" + content[sIndex:]
-        newContent = newContent_[:playerIndexPosition] + "." + newContent_[playerIndexPosition+1:]
-        print ""
-        print newContent
-    else:
-        print "You can't walk trough walls.\n"
-        print content
-    
-    from sys import argv
-    script, file = argv
-
-    fileData = open(file, 'w')
-    fileData.truncate()
-    fileData.write(newContent)
-    fileData.close()
-     
-def inputD(contentList, indexList, action):
-    
-    content = contentList[0]
-    dIndex = indexList[4]
-    playerIndexPosition = indexList[0]
-
-    # f update player d position
-    if action[0] == True:
-        global newContent
-        newContent_ = content[:dIndex-1] + "@" + content[dIndex:]
-        newContent = newContent_[:playerIndexPosition] + "." + newContent_[playerIndexPosition+1:]
-        print ""
-        print newContent
-    else:
-        print "You can't walk trough walls.\n"
-        print content
-    
-    from sys import argv
-    script, file = argv
-
-    fileData = open(file, 'w')
-    fileData.truncate()
-    fileData.write(newContent)
-    fileData.close()
-
-#---
-def takeInput():
-    i = raw_input("\n>")
-    inputCheck = bool(i != "w" or "a" or "s" or "d" or "exit")
-    #print inputCheck
-    
-    if inputCheck == False:
-        print "Uhh... What?"
-        takeInput()
-    elif i == "w":
-        inputW(contentList(indexList()), indexList(), wAction())
-    elif i == "a":
-        inputA(contentList(indexList()), indexList(), aAction())
-    elif i == "s":
-        inputS(contentList(indexList()), indexList(), sAction())
-    elif i == "d":
-        inputD(contentList(indexList()), indexList(), dAction())
-    elif i == "exit":
-        exit()
+    if playerInput == "exit":
+        #save contentList to savefile
+        exitGame(contentList)
+    elif playerInput == "w":
+        contentList = wAction(contentList)
+    elif playerInput == "a":
+        contentList = aAction(contentList)
+    elif playerInput == "s":
+        contentList = sAction(contentList)
+    elif playerInput == "d":
+        contentList = dAction(contentList)
     else:
         print "The valid controls are w, a, s, d for movement\nand exit for quiting the game."
-        takeInput()
-
-#---
-# driver code
-while gameOver == False:
-    #reloadFile()
-    takeInput()
-    #updateStatblock()
-
-#---
-fileData.close()
-
-"""
-    to do list 
-
-# f chack statblock
-# f update statblock
-
-# generateIndexList():
-# generateContent():
-
-    and other miscalaneous stuff
-""
-
-stra = 'Meatloaf'
-posn = 5
-nc = 'x'
-
-stra = string[:posn] + nc + string[posn+1:]
-print(stra)
-
-
-
-script, file = argv
-fileData = open(file)
-content = str(fileData.read())
-
-lines = content.splitlines()
-
-x_len = len(lines)
-y_len = len(lines[0].split())
-
-print 'MapSizeX:' + str(x_len)
-print 'MapSizeY:' + str(y_len)
-
-
-
-
-def indexList():
-# convert map file into usable form
-    from sys import argv
-    script, file = argv
-    fileData = open(file)
-    content = fileData.read() 
-    fileData.close()
-
-    lines = content.splitlines()
-    x_len = len(lines) # how long vertically the map is
-    lenY = lines[0].split()
-    y_len = len(lenY) # how long the map horisontaly is
-
+        print convertListToString(contentList)
+        playerTurn(contentList)
     
-    playerIndexPosition = content.find("@")
-    # find index number of player
-       
-    # f check player surroundings and return what is there
-    wIndex = playerIndexPosition - (y_len * 2 - 1)
-    aIndex = playerIndexPosition - 1
-    sIndex = playerIndexPosition + (y_len * 2 + 1)
-    dIndex = playerIndexPosition + 3
+    return contentList
     
-    return [playerIndexPosition, wIndex, aIndex, sIndex, dIndex]
+#----
+def exitGame(contentList):
+    # Whrites contentList to file and exits the game.
     
-def contentList():
-# convert map file into usable form
+    string = convertListToString(contentList)
+    
+    #### bug after this
+    
     from sys import argv
     script, file = argv
 
-    fileData = open(file)
-    content = fileData.read()
+    fileData = open(file, 'w')
+    
+    #print fileData.read()
+    
+    fileData.truncate()
+    
+    #print fileData.read()
+    
+    fileData.write(string)
+    
+    #print fileData.read()
     
     fileData.close()
-
-    lines = content.splitlines()
-
-    x_len = len(lines)
-    #print x_len # how long vertically the map is
     
-    #print lines
-    lenY = lines[0].split()
-    y_len = len(lenY)
-    #print y_len # how long the map horisontaly is
-
-    playerIndexPosition = content.find("@")
-    # find index number of player
-       
-    # f check player surroundings and return what is there
-    wContent = content[wIndex - 1]
-    aContent = content[aIndex - 1]
-    sContent = content[sIndex - 1]
-    dContent = content[dIndex - 1]
+    #### bug before this
     
-    return[content, wContent, aContent, sContent, dContent]
-
+    print string
     
-"""
+    
+    exit()
+    
+
+
+
+def wAction(contentList):
+
+    playerLocation = findCoordinates(contentList, "@") # Get player coordinates
+    
+    # @ [[playerx, playery]]
+    
+    playerX = playerLocation[0][0]
+    playerY = playerLocation[0][1]
+    
+    # @ playerx playery
+    
+    wPlayerSurroundings = [[playerX, playerY - 1]]
+    
+    # @ playerx playery [[coordinate of tile above player]]
+    
+    wFromPlayerB = lookUpCoordinates(contentList, wPlayerSurroundings)
+    wFromPlayer = wFromPlayerB[0]
+    
+    print wFromPlayer
+    
+    # @ playerx playery [[coordinate of tile above player]] ['content of tile above player']
+    
+    wXCoordinate = playerLocation[0][0]
+    wYCoordinate = playerLocation[0][1] - 1
+    
+    # @ playerx playery [[coordinate of tile above player]] ['content of tile above player'] xCoordinate_of_target_tile y_Coordinate_of_target_tile 
+    
+    if wFromPlayer == "#":
+        print "You can't walk trough walls"
+    elif wFromPlayer == ".":
+        contentList = setCoordinate(contentList, wXCoordinate, wYCoordinate, "@") # Add player character
+        contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
+    else:
+        print "Something in the way. Uuhhhh..."
+    
+    return contentList
+    
+def aAction(contentList):
+
+    playerLocation = findCoordinates(contentList, "@") # Get player coordinates
+    
+    print "a"
+    
+    playerX = playerLocation[0][0]
+    playerY = playerLocation[0][1]
+    # Take coordinate variables out of the lists
+    
+    aPlayerSurroundings = [[playerX - 1, playerY]]
+    # List containing coordinates of tile left from player for lookUpCoordinates() to use.
+    
+    aFromPlayerB = lookUpCoordinates(contentList, aPlayerSurroundings)
+    aFromPlayer = aFromPlayerB[0]
+    # Tilecontent of tile left from player
+    
+    #print aFromPlayer
+    
+    aXCoordinate = playerLocation[0][0] - 1
+    aYCoordinate = playerLocation[0][1]
+    # Get coordinates of tile left from player. [x, y + 1] 
+    
+    if aFromPlayer == "#":
+        print "You can't walk trough walls"
+    elif aFromPlayer == ".":
+        contentList = setCoordinate(contentList, aXCoordinate, aYCoordinate, "@") # Add player character
+        contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
+    else:
+        print "Something in the way. Uuhhhh..."
+    
+    return contentList
+    
+def sAction(contentList):
+
+    playerLocation = findCoordinates(contentList, "@") # Get player coordinates
+    
+    playerX = playerLocation[0][0]
+    playerY = playerLocation[0][1]
+    # Take coordinate variables out of the lists
+    
+    sPlayerSurroundings = [[playerX, playerY + 1]]
+    # List containing coordinates of tile below player for lookUpCoordinates() to use.
+    
+    sFromPlayerB = lookUpCoordinates(contentList, sPlayerSurroundings)
+    sFromPlayer = sFromPlayerB[0]
+    # Tilecontent of tile below player
+    
+    #print sFromPlayer
+    
+    sXCoordinate = playerLocation[0][0]
+    sYCoordinate = playerLocation[0][1] + 1
+    # Get coordinates of tile below player. [x, y + 1] 
+    
+    if sFromPlayer == "#":
+        print "You can't walk trough walls"
+    elif sFromPlayer == ".":
+        contentList = setCoordinate(contentList, sXCoordinate, sYCoordinate, "@") # Add player character
+        contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
+    else:
+        print "Something in the way. Uuhhhh..."
+    
+    return contentList
+
+def dAction(contentList):
+    
+    playerLocation = findCoordinates(contentList, "@") # Get player coordinates
+    
+    playerX = playerLocation[0][0]
+    playerY = playerLocation[0][1]
+    # Take coordinate variables out of the lists
+    
+    dPlayerSurroundings = [[playerX + 1, playerY]]
+    # List containing coordinates of tile right of player for lookUpCoordinates() to use.
+    
+    dFromPlayerB = lookUpCoordinates(contentList, dPlayerSurroundings)
+    dFromPlayer = dFromPlayerB[0]
+    # Tilecontent of tile right from player
+    
+    #print dFromPlayer
+    
+    dXCoordinate = playerLocation[0][0] + 1
+    dYCoordinate = playerLocation[0][1]
+    # Get coordinates of tile right of player. [x + 1 , y]
+    
+    # @ playerx playery [[coordinate of tile above player]] ['content of tile above player'] xCoordinate_of_target_tile y_Coordinate_of_target_tile 
+    
+    if dFromPlayer == "#":
+        print "You can't walk trough walls"
+    elif dFromPlayer == ".":
+        contentList = setCoordinate(contentList, dXCoordinate, dYCoordinate, "@") # Add player character
+        contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
+    else:
+        print "Something in the way. Uuhhhh..."
+    
+    return contentList
+
+
+# not done yet
+def environmentTurn(contentList):
+    #The environmentTurn function first generates a list of entities that have a turn.
+    #It then generates a turn for each individual entity and updates contentlist accordingly.
+    print "wip"
+    
+    
+#alteredList = setCoordinate(contentList, 2, 3, "K")
+
+# print convertListToString(alteredList)
+
+
+
+# No functions after this.
+
+contentList = convertFileToList()
+
+temp = True
+
+while temp == True:
+
+    print convertListToString(contentList) # Draw contentList to screen.
+    
+    contentList = playerTurn(contentList) # Update contentList with player input.
+    
+    #contentList = environmentTurn(contentList) # Update contentList with NPC input.
+    
+
+# The marking #---- in the beginning of codeblocks means that bugs are yet to be encountered in said blocks.

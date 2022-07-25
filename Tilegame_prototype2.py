@@ -69,7 +69,7 @@ def setCoordinate(contentList, x, y, change):
 #----
 def findCoordinates(contentList, target):
     #Returns a list in which each element is the coordinate for one of the targets.
-    #example coordinateList = [[1, 3] [2, 4]]
+    #example coordinateList = [[1, 3], [2, 4]]
     
     coordinateList = []
     
@@ -84,6 +84,7 @@ def findCoordinates(contentList, target):
                 coordinateList.append(newCoordinate)
             else:
                 pass
+    
     # The double loop goes trough every value in the contentList. 
     # On each tile the if statement checks if the the tile contains a wanted value.
     # If it does, then the values [j, i] are appended to the coordinateList.
@@ -108,9 +109,30 @@ def lookUpCoordinates(contentList, targetCoordinates):
         targetContent = contentList[targetY][targetX]
         
         coordinateContentList.append(targetContent)
+    
+    #print "coordinateContentList:"
+    #print coordinateContentList
         
     return coordinateContentList
+
+def getRelativeCoordinate(contentList, origoCoordinate, targetCoordinate):
+    #Returns the relative x and y distance from a given coordinate.
     
+    xOrigo = origoCoordinate[0]
+    yOrigo = origoCoordinate[1]
+    xTarget = targetCoordinate[0]
+    yTarget = targetCoordinate[1]
+    
+    xRelative = xOrigo - xTarget
+    yRelative = yOrigo - yTarget
+    
+    relativeCoordinate = [xRelative, yRelative]
+    
+    return relativeCoordinate
+
+# End of basic functions. 
+# Start of playerTurn functions
+   
 #---- 
 def playerTurn(contentList):
     #The playerTurn function takes input from player and updates the contentList accordingly.
@@ -140,8 +162,6 @@ def exitGame(contentList):
     
     string = convertListToString(contentList)
     
-    #### bug after this
-    
     from sys import argv
     script, file = argv
 
@@ -159,16 +179,9 @@ def exitGame(contentList):
     
     fileData.close()
     
-    #### bug before this
-    
-    print string
-    
-    
     exit()
-    
 
-
-
+#----
 def wAction(contentList):
 
     playerLocation = findCoordinates(contentList, "@") # Get player coordinates
@@ -187,7 +200,7 @@ def wAction(contentList):
     wFromPlayerB = lookUpCoordinates(contentList, wPlayerSurroundings)
     wFromPlayer = wFromPlayerB[0]
     
-    print wFromPlayer
+    #print wFromPlayer
     
     # @ playerx playery [[coordinate of tile above player]] ['content of tile above player']
     
@@ -205,12 +218,13 @@ def wAction(contentList):
         print "Something in the way. Uuhhhh..."
     
     return contentList
-    
+
+#----    
 def aAction(contentList):
 
     playerLocation = findCoordinates(contentList, "@") # Get player coordinates
     
-    print "a"
+    #print "a"
     
     playerX = playerLocation[0][0]
     playerY = playerLocation[0][1]
@@ -238,7 +252,8 @@ def aAction(contentList):
         print "Something in the way. Uuhhhh..."
     
     return contentList
-    
+
+#----    
 def sAction(contentList):
 
     playerLocation = findCoordinates(contentList, "@") # Get player coordinates
@@ -270,6 +285,7 @@ def sAction(contentList):
     
     return contentList
 
+#----
 def dAction(contentList):
     
     playerLocation = findCoordinates(contentList, "@") # Get player coordinates
@@ -291,7 +307,7 @@ def dAction(contentList):
     dYCoordinate = playerLocation[0][1]
     # Get coordinates of tile right of player. [x + 1 , y]
     
-    # @ playerx playery [[coordinate of tile above player]] ['content of tile above player'] xCoordinate_of_target_tile y_Coordinate_of_target_tile 
+    # @ playerx playery [[coordinate of right of player]] ['content of tile left of player'] xCoordinate_of_target_tile y_Coordinate_of_target_tile 
     
     if dFromPlayer == "#":
         print "You can't walk trough walls"
@@ -303,18 +319,206 @@ def dAction(contentList):
     
     return contentList
 
+# End of playerTurn functions
+# Start of environmentTurn functions
 
-# not done yet
+def environmentMove(contentList, fromCoordinate, toCoordinate):
+
+    #print fromCoordinate
+    #print toCoordinate
+
+    fromContent = lookUpCoordinates(contentList, fromCoordinate)
+    toContent = lookUpCoordinates(contentList, toCoordinate)
+    
+    fromContent = str(fromContent[0][0])
+    toContent = str(toContent[0][0])
+    
+    moveX = toCoordinate[0][0]
+    moveY = toCoordinate[0][1]
+    
+    playerX = fromCoordinate[0][0]
+    playerY = fromCoordinate[0][1]
+    
+    if toContent == "#":
+        #print "Enemy hit wall."
+        pass
+    elif toContent == ".":
+        contentList = setCoordinate(contentList, moveX, moveY, fromContent) # Add player character
+        contentList = setCoordinate(contentList, playerX, playerY, toContent) # Remove old character
+    else:
+        #print "Enemy hit foreign object. Uuhhhh..."
+        pass
+    
+    return contentList
+    
 def environmentTurn(contentList):
-    #The environmentTurn function first generates a list of entities that have a turn.
-    #It then generates a turn for each individual entity and updates contentlist accordingly.
-    print "wip"
+    #print "envTurn"
+    #The environmentTurn function contains the functions for each environment/ NPC type.
+    #What each of these do with their turns is written into their individual functions.
+    
+    contentList = entityTurn(contentList, "g") # Goblins turns
+    
+    return contentList
+
+def entityTurn(contentList, entityType):  
+    # Makes the move for every [entityType] on the map.
+    # For example if entityType = "g" then moves are made for goblins.
+
+    entityCoordinates = findCoordinates(contentList, entityType)
+    playerCoordinates = findCoordinates(contentList, "@")
+    
+    entityCount = len(entityCoordinates[0])
+    
+    if entityCount > 0 and entityType == "g":
+        for i in range(entityCount):
+            contentList = goblinTurn(contentList, entityCoordinates[i])
+    else:
+        pass
+    # This if-loop will be repeated in this function for all entity types.
     
     
-#alteredList = setCoordinate(contentList, 2, 3, "K")
+    #print "entityTurn"
+    return contentList
 
-# print convertListToString(alteredList)
+def goblinTurn(contentList, targetGoblin):
 
+    # goblinTurn(contentList, [x, y]) 
+    
+    playerCoordinates = findCoordinates(contentList, "@")
+    
+    xGobCoord = targetGoblin[0]
+    yGobCoord = targetGoblin[1]
+    
+    tilesSurroundingGoblin = [[xGobCoord, yGobCoord - 1], [xGobCoord - 1, yGobCoord], [xGobCoord, yGobCoord + 1], [xGobCoord + 1, yGobCoord]]
+    
+    gobSurroundingContent = lookUpCoordinates(contentList, tilesSurroundingGoblin)
+    
+    ## find out what is around goblin and rule out moves he can not make.
+    ## staying still is a valid move
+    canMove = "no"
+    
+    #print "from goblin:"
+    
+    wFromGoblin = gobSurroundingContent[0]
+    #print wFromGoblin
+    
+    aFromGoblin = gobSurroundingContent[1]
+    sFromGoblin = gobSurroundingContent[2]
+    dFromGoblin = gobSurroundingContent[3]
+    
+    #print aFromGoblin
+    #print sFromGoblin
+    #print dFromGoblin
+    
+    if wFromGoblin == ".":
+        canMove = "w"
+    elif aFromGoblin == ".":
+        canMove = "a"
+    elif sFromGoblin == ".":
+        canMove = "s"
+    elif dFromGoblin == ".":
+        canMove = "d"
+    else:
+        canMove = "no"
+        #print "enemy is confusion"
+        # No valid moves. Goblin stays still.
+        
+    ## check if tile bordering goblin contains player. 
+    ## if it does: attack player    
+    canAttack = "no"
+    
+    if gobSurroundingContent[0] == "@":
+        canAttack = "w"
+    elif gobSurroundingContent[1] == "@":
+        canAttack = "a"
+    elif gobSurroundingContent[2] == "@":
+        canAttack = "s"
+    elif gobSurroundingContent[3] == "@":
+        canAttack = "d"
+    else:
+        canAttack = "no"
+    
+    ## find what direction from goblins point of view the player is.
+    
+    goblinRelativeToPlayer = getRelativeCoordinate(contentList, playerCoordinates[0], targetGoblin)
+    
+    xRelativeCoordinate = goblinRelativeToPlayer[0]
+    yRelativeCoordinate = goblinRelativeToPlayer[1]
+    
+    #print "Relative coordinates:" + str(xRelativeCoordinate) + ", " + str(yRelativeCoordinate)
+    
+    xAbsValue = abs(xRelativeCoordinate)
+    yAbsValue = abs(yRelativeCoordinate)
+    
+    #print str(xAbsValue) + ", " + str(yAbsValue)
+    
+    if xRelativeCoordinate <= 0: 
+        xGoblinPOV = "a"
+    elif xRelativeCoordinate > 0:
+        xGoblinPOV = "d"
+    else:
+        xGoblinPOV = "no"
+    
+    #print xGoblinPOV
+    #print abs(yRelativeCoordinate) > abs(xRelativeCoordinate)
+    
+    if yRelativeCoordinate <= 0: 
+        yGoblinPOV = "w"
+    elif yRelativeCoordinate > 0:
+        yGoblinPOV = "s"
+    else:
+        yGoblinPOV = "no"
+        
+    #print yGoblinPOV
+    #print abs(yRelativeCoordinate) >= abs(xRelativeCoordinate)
+        
+    ## find which tile to move to in order to reach player the fastest. 
+    if abs(yRelativeCoordinate) >= abs(xRelativeCoordinate) and (yGoblinPOV == "w") == True:
+        willMove = "w"
+        #print "will move w"
+    elif abs(yRelativeCoordinate) <= abs(xRelativeCoordinate) and (xGoblinPOV == "a") == True:
+        willMove = "a"
+        #print "will move a"
+    elif abs(yRelativeCoordinate) > abs(xRelativeCoordinate) and (yGoblinPOV == "s") == True:
+        willMove = "s"
+        #print "will move s"
+    elif abs(yRelativeCoordinate) < abs(xRelativeCoordinate) and (xGoblinPOV == "d") == True:
+        willMove = "d"
+        #print "will move d"
+    else:
+        willMove = "no"
+    
+    
+    if canAttack != "no":
+        print "The goblin pokes the player"
+    else:
+        pass
+
+    # Because of the way lookupcoords() takes input even a singular coordinate has to be inside two lists
+    
+    targetGob = [targetGoblin]
+    wFromGob = [tilesSurroundingGoblin[0]]
+    aFromGob = [tilesSurroundingGoblin[1]]
+    sFromGob = [tilesSurroundingGoblin[2]]
+    dFromGob = [tilesSurroundingGoblin[3]]
+    
+    
+    if (canMove != "no") and (canAttack == "no") == True:
+        #Move
+        if willMove == "w":
+            environmentMove(contentList, targetGob, wFromGob) #w
+        elif willMove == "a":
+            environmentMove(contentList, targetGob, aFromGob) #a
+        elif willMove == "s":
+            environmentMove(contentList, targetGob, sFromGob) #s
+        elif willMove == "d":
+            environmentMove(contentList, targetGob, dFromGob) #d
+        else:
+            pass
+    else:
+        pass
+    
+    return contentList
 
 
 # No functions after this.
@@ -329,7 +533,7 @@ while temp == True:
     
     contentList = playerTurn(contentList) # Update contentList with player input.
     
-    #contentList = environmentTurn(contentList) # Update contentList with NPC input.
+    contentList = environmentTurn(contentList) # Update contentList with NPC input.
     
 
 # The marking #---- in the beginning of codeblocks means that bugs are yet to be encountered in said blocks.

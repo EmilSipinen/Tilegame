@@ -1,7 +1,6 @@
 The game runs on the terminal with the following command:
 
-python2 tilegame_prototype2.py Levelfile.txt
-
+python2 -u tilegame_prototype2.py Levelfile.txt
 
 Rules to making functioning level files:
 
@@ -12,6 +11,5 @@ Rules to making functioning level files:
 -A character other than whitespace should be the first and last character on a line.
 
 -The borders of the level should be octothorpes to keep the player on the board.
-
 
 Along with the code itself there are two example levels in the repository.

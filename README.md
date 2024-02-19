@@ -13,6 +13,9 @@ python tilegame_prototype2.py Level.txt    # Python 3 specifically
 
 WASD to move, `exit` to quit.
 
+![image](https://github.com/hiAndrewQuinn/Tilegame/assets/53230903/8d390649-9f6a-4b85-b98e-16256b139afd)
+
+
 ## Hacker's Notes
 
 - Each line in the level must have equal length.

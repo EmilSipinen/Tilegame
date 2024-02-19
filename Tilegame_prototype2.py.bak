@@ -136,7 +136,7 @@ def getRelativeCoordinate(contentList, origoCoordinate, targetCoordinate):
 #---- 
 def playerTurn(contentList):
     #The playerTurn function takes input from player and updates the contentList accordingly.
-    playerInput = input("> ")    
+    playerInput = raw_input("> ")    
     
     if playerInput == "exit":
         #save contentList to savefile
@@ -150,8 +150,8 @@ def playerTurn(contentList):
     elif playerInput == "d":
         contentList = dAction(contentList)
     else:
-        print("The valid controls are w, a, s, d for movement\nand exit for quiting the game.")
-        print(convertListToString(contentList))
+        print "The valid controls are w, a, s, d for movement\nand exit for quiting the game."
+        print convertListToString(contentList)
         playerTurn(contentList)
     
     return contentList
@@ -210,12 +210,12 @@ def wAction(contentList):
     # @ playerx playery [[coordinate of tile above player]] ['content of tile above player'] xCoordinate_of_target_tile y_Coordinate_of_target_tile 
     
     if wFromPlayer == "#":
-        print("You can't walk trough walls")
+        print "You can't walk trough walls"
     elif wFromPlayer == ".":
         contentList = setCoordinate(contentList, wXCoordinate, wYCoordinate, "@") # Add player character
         contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
     else:
-        print("Something in the way. Uuhhhh...")
+        print "Something in the way. Uuhhhh..."
     
     return contentList
 
@@ -244,12 +244,12 @@ def aAction(contentList):
     # Get coordinates of tile left from player. [x, y + 1] 
     
     if aFromPlayer == "#":
-        print("You can't walk trough walls")
+        print "You can't walk trough walls"
     elif aFromPlayer == ".":
         contentList = setCoordinate(contentList, aXCoordinate, aYCoordinate, "@") # Add player character
         contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
     else:
-        print("Something in the way. Uuhhhh...")
+        print "Something in the way. Uuhhhh..."
     
     return contentList
 
@@ -276,12 +276,12 @@ def sAction(contentList):
     # Get coordinates of tile below player. [x, y + 1] 
     
     if sFromPlayer == "#":
-        print("You can't walk trough walls")
+        print "You can't walk trough walls"
     elif sFromPlayer == ".":
         contentList = setCoordinate(contentList, sXCoordinate, sYCoordinate, "@") # Add player character
         contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
     else:
-        print("Something in the way. Uuhhhh...")
+        print "Something in the way. Uuhhhh..."
     
     return contentList
 
@@ -310,12 +310,12 @@ def dAction(contentList):
     # @ playerx playery [[coordinate of right of player]] ['content of tile left of player'] xCoordinate_of_target_tile y_Coordinate_of_target_tile 
     
     if dFromPlayer == "#":
-        print("You can't walk trough walls")
+        print "You can't walk trough walls"
     elif dFromPlayer == ".":
         contentList = setCoordinate(contentList, dXCoordinate, dYCoordinate, "@") # Add player character
         contentList = setCoordinate(contentList, playerX, playerY, ".") # Remove old character
     else:
-        print("Something in the way. Uuhhhh...")
+        print "Something in the way. Uuhhhh..."
     
     return contentList
 
@@ -490,7 +490,7 @@ def goblinTurn(contentList, targetGoblin):
     
     
     if canAttack != "no":
-        print("The goblin pokes the player")
+        print "The goblin pokes the player"
     else:
         pass
 
@@ -529,7 +529,7 @@ temp = True
 
 while temp == True:
 
-    print(convertListToString(contentList)) # Draw contentList to screen.
+    print convertListToString(contentList) # Draw contentList to screen.
     
     contentList = playerTurn(contentList) # Update contentList with player input.
     

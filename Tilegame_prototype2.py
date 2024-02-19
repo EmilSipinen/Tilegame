@@ -1,6 +1,3 @@
-# python2 -u Tilegame_prototype2.py Level.txt
-
-#----
 def convertFileToList(): 
     # Converts file to list
 
@@ -523,17 +520,11 @@ def goblinTurn(contentList, targetGoblin):
 
 # No functions after this.
 
-contentList = convertFileToList()
-
-temp = True
-
-while temp == True:
-
-    print(convertListToString(contentList)) # Draw contentList to screen.
-    
-    contentList = playerTurn(contentList) # Update contentList with player input.
-    
-    contentList = environmentTurn(contentList) # Update contentList with NPC input.
-    
-
-# The marking #---- in the beginning of codeblocks means that bugs are yet to be encountered in said blocks.
+if __name__ == "__main__":
+    contentList = convertFileToList()
+    print(convertListToString(contentList))
+    while True:
+        contentList = playerTurn(contentList)
+        contentList = environmentTurn(contentList)
+        print(convertListToString(contentList))
+    exitGame(contentList)

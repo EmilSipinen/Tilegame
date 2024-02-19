@@ -1,15 +1,24 @@
-The game runs on the terminal with the following command:
+Emil's Tile Game
+=========================================================================
 
-python2 -u tilegame_prototype2.py Levelfile.txt
+## Quickstart
 
-Rules to making functioning level files:
+Nothing besides the Python standard library is necessary to run this game. :)
 
--The level itself should be the first thing on the file.
+```bash
+python tilegame_prototype2.py Level.txt    # Python 3 specifically
+```
 
--Each line on the level must be of equal lenght.
+## Controls
 
--A character other than whitespace should be the first and last character on a line.
+WASD to move, `exit` to quit.
 
--The borders of the level should be octothorpes to keep the player on the board.
+## Hacker's Notes
 
-Along with the code itself there are two example levels in the repository.
+- Each line in the level must have equal length.
+- A character other than whitespace should be the first and last character on each line.
+- The borders of the level should be represented by octothorpes ('#') to keep the player within the board boundaries.
+- `Level.txt` currently gets **rewritten with every move** as a save mechanism. Be careful with your Git pushes!
+
+Note: Along with the code, there are two example levels included in the repository for reference.
+
